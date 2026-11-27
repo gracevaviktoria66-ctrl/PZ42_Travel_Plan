@@ -64,3 +64,28 @@ planButton.addEventListener("click", () => {
       planButton.disabled = false;
     });
 });
+
+async function buildPlan() {
+  planButton.disabled = true;
+  result.textContent = "Составляем совет...";
+  status.className = "status status--working";
+  status.textContent = "Получаем данные...";
+
+  try {
+    const city = await getCity(citySelect.value);
+    const weather = await getWeather(city);
+    const advice = await getAdvice(weather);
+
+    result.textContent = advice;
+    status.className = "status status--success";
+    status.textContent = "Совет готов.";
+  } catch (error) {
+    result.textContent = error.message;
+    status.className = "status status--error";
+    status.textContent = "Не удалось составить совет.";
+  } finally {
+    planButton.disabled = false;
+  }
+}
+
+planButton.addEventListener("click", buildPlan);
